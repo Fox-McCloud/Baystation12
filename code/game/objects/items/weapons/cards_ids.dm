@@ -74,6 +74,8 @@
 	var/blood_type = "\[UNSET\]"
 	var/dna_hash = "\[UNSET\]"
 	var/fingerprint_hash = "\[UNSET\]"
+	var/age = "\[UNSET\]"
+	var/sex = "\[UNSET\]"
 
 	//alt titles are handled a bit weirdly in order to unobtrusively integrate into existing ID system
 	var/assignment = null	//can be alt title or the actual job
@@ -87,13 +89,36 @@
 		blood_type = loc:dna:b_type
 		dna_hash = loc:dna:unique_enzymes
 		fingerprint_hash = md5(loc:dna:uni_identity)
-
+		sex = loc:gender
+		age = loc:age
+/*
 /obj/item/weapon/card/id/attack_self(mob/user as mob)
 	for(var/mob/O in viewers(user, null))
 		O.show_message(text("[] shows you: \icon[] []: assignment: []", user, src, src.name, src.assignment), 1)
 
 	src.add_fingerprint(user)
 	return
+*/
+
+//ZomgPonies visual ID
+/obj/item/weapon/card/id/attack_self(mob/user as mob)
+	var/dat
+// This needs to be on the ID right off the start
+/*	get_id_photo(src)
+	user << browse_rsc(preview_icon_front, "front.png")
+	user << browse_rsc(preview_icon_side, "side.png")	*/
+	for(var/mob/O in viewers(user, null))
+		dat += text("<table><tr><td>	\
+		Name: [registered_name]</A><BR> \
+		Sex: [sex]</A><BR>\n	\
+		Age: [age]</A><BR>\n	\
+		Rank: [assignment]</A><BR>\n	\
+		Blood Type: [blood_type]</A><BR>\n	\
+		DNA: [dna_hash]</A><BR>\n	\
+		Fingerprint: [fingerprint_hash]</A><BR>\n	\
+		<td align = center valign = top>Photo:<br><img src=front.png height=80 width=80 border=4>	\
+		<img src=side.png height=80 width=80 border=4></td></tr></table>")
+		user << browse(dat, "window=id_card;size=450x250")
 
 /obj/item/weapon/card/id/GetAccess()
 	return access
